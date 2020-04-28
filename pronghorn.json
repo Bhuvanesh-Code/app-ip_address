@@ -1,0 +1,349 @@
+
+Skip to main content
+Itential Academy Home Page
+IDEV110Itential Product Essentials
+My Courses
+Find Courses
+Welcome,
+Prashant
+.
+
+My Courses
+Find Courses
+Profile
+Account
+Sign Out
+Course
+Discussion
+Wiki
+Tech Support
+Progress
+Bookmarks
+Course Search
+Course Search...
+
+Entrance Exam
+Welcome, Introduction, and Learning Objectives
+Chapter 1. Platform Logic Division
+Chapter 2. Itential Product Packages
+Chapter 3. npm
+Chapter 4. JSDoc
+Chapter 5. Node.js Modules
+Chapter 6. Node.js Callbacks
+Chapter 7. IAP Packages
+Introduction and Learning Objectives
+
+IAP Packagescurrent section
+
+Lab This content is graded
+Lab Exam
+
+Lab This content is graded
+Knowledge Check
+
+Knowledge Check This content is graded
+Learning Objectives Review
+
+Chapter 8. IAP APIs
+Chapter 9. Managing Runtime Problems
+Course  Chapter 7. IAP Packages  IAP Packages  Lab 4: IAP Product
+ Previous
+Next 
+ other IAP Product Characteristics 
+ other File package.json 
+ other File pronghorn.json 
+ other JSON Schema 
+ other IAP Products Export an Object 
+ other Linking Projects into IAP 
+ other Package Discovery and Change Detection 
+ other Logging Overview 
+ other Logging System Tasks 
+ other Logs for Troubleshooting 
+ other Writing Log Messages 
+ video Lab 4: IAP Product 
+Lab 4: IAP Product
+ Bookmark this page
+Build an IAP Product
+In this lab, we will make all the necessary changes to evolve our Node.js package into an IAP product:
+
+ Create a pronghorn.json IAP configuration file.
+ Create a LICENSE.md file.
+ Create a JSON Schema file.
+ Modify the main Node.js module to define a class, instantiate an object from the class, and export the object.
+ Link the project into IAP's node_mdules directory.
+ Restart IAP to discover our new IAP product.
+ Test the new product by building a workflow with a task to the new product's method.
+Itential Academy's virtual labs are periodically reclaimed. In order to provide data persistence for all your programs and custom IAP packages, developer labs use a Git repository to store programming work. In this lab, we will first assess whether the virtual lab has been reclaimed or not. Generally, if you have a course respite lasting more than a few hours, for example you are returning the next day, your lab may have been reclaimed, and you will need to restore your project from your Git repository.
+
+Click to launch your IAP Product Essentials lab
+Follow these steps to verify and, if required, restore your project:
+Click Open IDE above to open your lab's Web Integrated Development Environment (IDE) in a new browser tab.
+If the IDE shows your app-ip_address project, its files, and the terminal window with a present working directory /opt/pronghorn-workspace/app-ip_address, your lab wasn't reclaimed. Your project is intact.
+If the IDE doesn't show the terminal window, follow these steps to verify your project:
+Select menu File->Open New Terminal to show the terminal window. The IDE terminal presents a shell to the server.
+Click in the terminal and type command:
+ls /opt/pronghorn-workspace/app-ip_address/main.js 2> /dev/null; echo $?
+Copy
+If the last step returns 2, your lab was reclaimed. Follow these steps to restore your project:
+Click in the terminal and type these commands to restore the workspace directory:
+mkdir -p /opt/pronghorn-workspace
+cd /opt/pronghorn-workspace
+Copy
+Paste your repository's URL here so that it can be used to build shell commands in later steps.
+Hint: Your GitHub repository URL will be saved in Lab 1 for the answer to the lab's Verify Proper Format question.
+Paste your GitHub email address here so that it can be used to build shell commands in later steps.
+Paste your GitHub username here so that it can be used to build shell commands in later steps.
+Click in the terminal and type these commands to clone your Git repository to your virtual lab, change to the local repository instance, setup your Git identity, and specify the default method for pushing changes to GitHub.
+This content does not have a copy button.
+(complete earlier question)
+cd ./app-ip_address
+(complete earlier question)
+(complete earlier question)
+git config push.default simple
+These steps recreated your project, but they didn't restore the package's dependencies, which includes the ip-cidr package and its dependencies. We don't want to track public npm packages in our repository, and we don't need to track dependencies because npm provides an easy process to restore packages.
+Install dependent project packages. Click in the terminal and type command:
+npm install
+Copy
+The npm install command parses your package's package.json file, learns its dependent packages, and download and installs those packages and their dependencies.
+Follow these steps to open the project:
+In the web IDE, select menu File->Open Workspace to open the Open Workspace... modal.
+In the model, select folder /opt/pronghorn-workspace/app-ip_address and click Open to open the workspace in a new browser tab.
+Click Files in the left-side navigation panel to show the workspace files.
+Select menu File->Open New Terminal to show the terminal window again.
+Click in the terminal and type this commands to customize the shell prompt.
+PS1="\e[1;32m\u\e[m:\e[1;34m\w\e[m# "
+Copy
+Select menu File->Auto Save to disable auto save.
+Click in the terminal window and type this command to preserve the previous lab's work:
+cp ./main.js ./lab03.main.js
+Copy
+Follow these instructions to create IAP configuration file pronghorn.json:
+Create new file pronghorn.json directly under directory app-ip_address.
+Paste this content into the new file, and save the file:
+{
+  "id": "@acme/app-ip_address",
+  "type": "Application",
+  "title": "ip-address",
+  "displayName": "IP Address",
+  "export": "IpAddress",
+  "summary": "The IP Address application performs operations on IP addresses.",
+  "src": "main.js",
+  "encrypted": false,
+  "roles": [
+    "admin",
+    "engineering",
+    "support",
+    "apiread",
+    "apiwrite"
+  ],
+  "methods": [
+    {
+      "name": "getFirstIpAddress",
+      "display_name": "Get First IP Address",
+      "deprecated": false,
+      "summary": "Get Subnet's First IP Address",
+      "description": "Calculates and returns the first host IP address from a CIDR subnet.",
+      "input": [
+        {
+          "name": "cidrStr",
+          "description": "The IPv4 subnet expressed in CIDR format.",
+          "type": "string",
+          "info": "Request subnet from IPAM.",
+          "required": true,
+          "schema": {
+            "title": "cidrStr",
+            "$ref": "ipAddresses#/definitions/ipv4CIDR"
+          }
+        }
+      ],
+      "output": {
+        "name": "firstIpAddress",
+        "description": "An object containing both an IPv4 address and its mapped ipv6 address.",
+        "type": "object",
+        "schema": {
+          "title": "firstIpAddress",
+          "$ref": "ipAddresses#/definitions/hostIpv4AndIpv6Address"
+        }
+      },
+      "route": {
+        "path": "/firstIpAddress/:cidrStr",
+        "verb": "GET"
+      },
+      "roles": [
+        "admin",
+        "engineering",
+        "support",
+        "apiread"
+      ],
+      "task": true
+    }
+  ],
+  "views": []
+}
+Copy
+Follow these instructions to create file LICENSE.md:
+Create new file LICENSE.md directly under directory app-ip_address.
+Double click file LICENSE.md in the IDE's file browser then right-click and choose Open With -> Code Editor from the context menu.
+Paste this content into the new file, and save the file:
+Copyright (c) 2018 ACME Inc.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+Copy
+Follow these instructions to create the package's JSON Schema file:
+Create new directory json-schema directly under directory app-ip_address.
+Create new file ipAddresses.json in directory json-schema.
+Paste this content for the base schema properties: $id, $schema, title, description, and definitions:
+{
+  "$id": "ipAddresses",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "IP Addresses",
+  "description": "IP Address parameters and returned data.",
+  "definitions": {}
+}
+Copy
+Add properties to the definitions property.
+The definitions properties' keys must match their references in file pronghorn.json. Recall a pronghorn.json reference:
+"schema": {
+  "title": "cidrStr",
+  "$ref": "ipAddresses#/definitions/ipv4CIDR"
+}
+We need a definition with key ipv4CIDR. File pronghorn.json referenced two definitions: ipv4CIDR and hostIpv4AndIpv6Address.
+Replace "definitions": {} in the JSON Schema file with the following:
+"definitions": {
+    "ipv4CIDR": {},
+    "hostIpv4AndIpv6Address": {}
+  }
+Copy
+For each of the two properties, create type, description, pattern, default, and examples properties.
+The pattern properties are JSON-escaped regular expressions (regex) matching different IP addresses. You can find regex patterns for IP addresses with a Internet search. If you are new to regex, the Regular Expressions 101 website is a good tool for learning and testing. When working with regular expression patterns, remember to escape reserved JSON characters. The JSON String Escape online tool can help expedite this task.
+Replace the definitions property with the following suggestion:
+"definitions": {
+    "ipv4CIDR": {
+      "type": "string",
+      "description": "An IPv4 subnet expressed in CIDR notation.",
+      "pattern": "^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)[/](?:3[0-2]|[12][0-9]|[1-9])$",
+      "default": "",
+      "examples": [ "172.16.10.0/24", "192.168.1.216/30" ]
+    },
+    "hostIpv4AndIpv6Address": {
+      "type": "object",
+      "description": "An object holding a host's IPv4 and IPv6 addresses.",
+      "required": [
+        "ipv4",
+        "ipv6"
+      ],
+      "properties": {
+        "ipv4": {
+          "type": "string",
+          "description": "An IPv4 host address in dotted-quad decimal format.",
+          "pattern": "^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$",
+          "default": "",
+          "examples": [ "172.16.10.1", "192.168.1.217" ]
+        },
+        "ipv6": {
+          "type": "string",
+          "description": "An IPv4-encapsulated IPv6 host address.",
+          "pattern": "^(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))$",
+          "default": "",
+          "examples": [ "0:0:0:0:0:ffff:ac10:0a01", "0:0:0:0:0:ffff:c0a8:01d9" ]
+        }
+      }
+    }
+  }
+Copy
+Save the file.
+Follow these steps to modify main.js:
+We no longer need testing function main(). Follow these steps to remove it:
+Delete the call to function main().
+Delete function main().
+At the bottom of the file, define class IpAddress with a simple constructor().
+class IpAddress {
+  constructor() {
+    // IAP's global log object is used to output errors, warnings, and other
+    // information to the console, IAP's log files, or a Syslog server.
+    // For more information, consult the Log Class guide on the Itential
+    // Developer Hub https://developer.itential.io/ located
+    // under Documentation -> Developer Guides -> Log Class Guide
+    log.info('Starting the IpAddress product.');
+  }
+}
+Copy
+Follow these steps to make function getFirstIpAddress() a method in class IpAddress:
+Move the function inside the class definition after the constructor.
+Remove keyword function
+At the bottom of the file, instantiate an object from class IpAddress and export the object.
+module.exports = new IpAddress;
+Copy
+Save file main.js.
+Click in the terminal window and type these commands to add all changed files to be tracked in the local repository instance, commit all tracked files, and push committed files to your GitHub repository:
+git add -A
+git commit -m "Lab 4"
+git push
+Copy
+While pushing committed files, type your GitHub username and password when prompted.
+
+At this point, all your work has been uploaded to your origin Git repository. Your virtual lab is ephemeral. If you leave the course for the day, your virtual lab will be reclaimed by the next day. Any additional changes to your project will not be automatically uploaded to GitHub, and they will be lost when your virtual lab is reclaimed. If you do make additional changes, make sure to repeat the git add, git commit, and git push commands to avoid losing your changes.
+Click in the terminal window and type these commands to create a symbollic link to the project under IAP's node_modules directory:
+mkdir /opt/pronghorn/current/node_modules/\@acme
+ln -s /opt/pronghorn-workspace/app-ip_address /opt/pronghorn/current/node_modules/\@acme
+Copy
+If there is ever a time to monitor logs, it is now. Restarting IAP initiates an IAP package discovery. Package problems can prevent IAP from starting, prevent the package from starting, and cause the package to crash. If any of these symptoms occur, log files usually reveal the reason. This is the first time you add your product package, and the risk of problems is high. You may find it easier to monitor logs in a proper terminal. Use the tools discussed in the logging lectures to monitor the systemd journal and IAP log files as you restart IAP.
+Click in the terminal window and type this command to restart IAP so it can discover your package:
+supervisorctl restart pronghorn
+Copy
+Click the Open IAP button that appeared after you launched your lab.
+Log in with username:
+engineer
+Copy
+and password:
+engineer
+Copy
+Verify your IAP product IPAddress is running by checking the system dashboard under menu SETTINGS->SYSTEM and clicking the Applications tab.
+Use your knowledge from course IAP101 Introduction to the Itential Automation Platform to build a workflow that tests your getFirstIpAddress task from your IP Address IAP product.
+Lab 4 Demo
+
+0:00 / 0:00Press UP to enter the speed menu then use the UP and DOWN arrow keys to navigate the different speeds, then press ENTER to change to the selected speed.Speed1.0xClick on this button to mute or unmute this video or press UP or DOWN buttons to increase or decrease volume level.Maximum Volume.Video transcript
+Start of transcript. Skip to the end.
+This video is a demonstration of the final lab after resuming or restoring our project.
+In this lab, we will create an IAP product by expanding the Node.js program created
+in previous labs.
+As you perform the steps in this lab, be sure you are creating files in their
+correct directories.
+You will want to select the parent directory before creating new files from
+the IDE's menu File > New File.
+Begin by creating file pronghorn.json, the IAP configuration file for our product.
+The lecture discussed in detail this JSON configuration file's purpose and properties,
+so you will not be required to type the file.
+Its contents will be provided.
+Recall our npm package referenced a license in a markdown file named LICENSE.md.
+Create this file.
+Notice how markdown files are managed by the IDE.
+After creating the file, it will be displayed in a preview mode.
+To make markdown file changes, right-click the file and choose Open With > Code Editor
+from the context menu.
+Create a json-schema directory and a JSON Schema file for the IAP product.
+Modify the main.js module so it defines a class,
+instantiates an object from the class, and exports the object.
+Link the project into IAP's node_modules directory.
+Restart IAP to trigger its package discovery and load your product.
+Finally, test your lab by calling your product's API through a job task.
+The test will demonstrate success by returning an object with ipv4 and ipv6
+properties for a valid CIDR IP subnet input.
+When performing negative tests, the task should return an error finish state.
+End of transcript. Skip to the start.
+ Previous
+Next 
+© All Rights Reserved
+None
+© 2019 Itential, LLC. All rights reserved.
+
+Privacy Policy Terms of Use Itential Developer Hub Itential - Intelligent Automation for Modern Networks
+Powered by:
+
+Appsembler
+Open edX
+edX, Open edX and the edX and Open edX logos are trademarks or registered trademarks of edX Inc.
